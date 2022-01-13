@@ -338,7 +338,7 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
     }
     if (tlen_vec_filt.size() < min_reads_per_sample) {
       std::stringstream ss;
-      ss << "Not enough reads for " << *it << " " << tlen_vec_filt.size()<<". Please set insert size distribution manually.";
+      ss << "Not enough reads for " << *it << " " << tlen_vec_filt.size()<<" after filtering. Please set insert size distribution manually.";
       PrintMessageDieOnError(ss.str(), M_ERROR, false);
       return false;
     }
