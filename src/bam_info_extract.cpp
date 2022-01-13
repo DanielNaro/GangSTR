@@ -6,7 +6,8 @@ This file is part of GangSTR.
 
 GangSTR is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
+the Free Software 
+ation, either version 3 of the License, or
 (at your option) any later version.
 
 GangSTR is distributed in the hope that it will be useful,
@@ -129,8 +130,15 @@ bool BamInfoExtract::GetCoverageGC(std::map<std::string, SampleProfile>* profile
 	  rgid = fname + ":" + read_group;
 	  found_sample = true;
 	}
-	if (!found_sample) continue;
-	if (rg_ids_to_sample.find(rgid) == rg_ids_to_sample.end()) continue;
+	if (!found_sample){
+		PrintMessageDieOnError("Could not find sample for " + alignment.Name(), M_WARNING, false);
+		continue;
+	}
+	PrintMessageDieOnError("Will search read group " + rgid, M_WARNING, options->quiet);
+	if (rg_ids_to_sample.find(rgid) == rg_ids_to_sample.end()){
+		PrintMessageDieOnError("Did not find info for read group " + rgid, M_WARNING, false);
+		continue;
+	}
 	sample = rg_ids_to_sample[rgid];
 	// Get template length and assign to that sample
 	sample_gc_bases[sample][i] += alignment.QueryBases().size();
@@ -265,14 +273,20 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
 	found_sample = true;
       } else {
 	if (!alignment.GetStringTag("RG", read_group)) {
-	  PrintMessageDieOnError("Could not find read group for " + alignment.Name(), M_WARNING, options->quiet);
+	  PrintMessageDieOnError("Could not find read group for " + alignment.Name(), M_WARNING, false);
 	  found_sample = false;
 	}
 	rgid = fname + ":" + read_group;
 	found_sample = true;
       }
-      if (!found_sample) continue;
-      if (rg_ids_to_sample.find(rgid) == rg_ids_to_sample.end()) continue;
+      if (!found_sample) {
+	      PrintMessageDieOnError("Sample not found for " + alignment.Name(), M_WARNING, false);
+	      continue;
+      }
+      if (rg_ids_to_sample.find(rgid) == rg_ids_to_sample.end()) {
+	      PrintMessageDieOnError("Rg id seems to not exists: " + rgid, M_WARNING, false);
+	      continue;
+      }
       sample = rg_ids_to_sample[rgid];
       /*
       if (samp_read_counts.find(sample) == samp_read_counts.end()){
@@ -294,6 +308,7 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
       }
       */
       // Get template length and assign to that sample
+	    PrintMessageDieOnError("Pushing back " + alignment.TemplateLength()+ " for sample "+sample, M_WARNING, false);
       sample_to_tlens[sample].push_back(abs(alignment.TemplateLength()));
     }
     num_regions_so_far++;
