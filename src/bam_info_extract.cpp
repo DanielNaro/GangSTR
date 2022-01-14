@@ -229,11 +229,23 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
 					       const std::set<std::string> samples,
 					       std::map<std::string, std::string> rg_ids_to_sample,
 					       bool custom_read_groups) {
+  for(std::map<string, string>::const_iterator it = rg_ids_to_sample.cbegin();
+        it != rg_ids_to_sample.cend(); it++) {
+      std::stringstream ss;
+      ss << "Read group id " << it->first << " associated with " << it->second;
+      PrintMessageDieOnError(ss.str(), M_WARNING, false);
+  }
+
+
   // Keep track of template lengths for each sample
 
   std::map<std::string, std::vector<int32_t> > sample_to_tlens;
   for (std::set<std::string>::const_iterator it = samples.begin();
        it != samples.end(); it++) {
+    std::stringstream ss;
+    ss << "Has sample "<<*it;
+    PrintMessageDieOnError(ss.str(), M_WARNING, false);
+
     std::vector<int32_t> vec;
     vec.clear();
     sample_to_tlens[*it] = vec;
@@ -308,7 +320,9 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
       }
       */
       // Get template length and assign to that sample
-	    PrintMessageDieOnError("Pushing back " + alignment.TemplateLength()+ " for sample "+sample, M_WARNING, false);
+        std::stringstream ss;
+        ss << "Pushing back " << alignment.TemplateLength() << " for sample " << "sample";
+	    PrintMessageDieOnError(ss.str(), M_WARNING, false);
       sample_to_tlens[sample].push_back(abs(alignment.TemplateLength()));
     }
     num_regions_so_far++;
