@@ -279,7 +279,7 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
            <<" start:"<< locus.start + region_offset
            << "end:"<< locus.start + region_offset + region_length;
         PrintMessageDieOnError(ss.str(), M_WARNING, false);
-        
+
         bamreader->SetRegion(locus.chrom, locus.start + region_offset, locus.start + region_offset + region_length);
         while (bamreader->GetNextAlignment(alignment)) {
             // Is this read worth looking at?
@@ -336,7 +336,7 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
             */
             // Get template length and assign to that sample
             std::stringstream ss;
-            ss << "Pushing back " << alignment.TemplateLength() << " for sample " << "sample";
+            ss << "Pushing back " << alignment.TemplateLength() << " for sample " << sample;
             PrintMessageDieOnError(ss.str(), M_WARNING, false);
             sample_to_tlens[sample].push_back(abs(alignment.TemplateLength()));
         }
