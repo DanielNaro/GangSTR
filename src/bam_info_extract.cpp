@@ -272,8 +272,14 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
     Locus locus;
     region_reader->Reset();
     BamAlignment alignment;
-    while ((num_regions_so_far < num_regions_to_use) &&
-           region_reader->GetNextRegion(&locus)) {
+
+    size_t min_tlens_collection_size = 0;
+    while (
+            (
+                    (num_regions_so_far < num_regions_to_use)
+                    || min_tlens_collection_size < min_reads_per_sample*2
+            ) && region_reader->GetNextRegion(&locus)
+        ) {
         std::stringstream ss;
         ss << "Loading regions " << locus.chrom
            <<" start:"<< locus.start + region_offset
@@ -339,6 +345,9 @@ bool BamInfoExtract::GetInsertSizeDistribution(std::map<std::string, SampleProfi
             ss << "Pushing back " << alignment.TemplateLength() << " for sample " << sample;
             PrintMessageDieOnError(ss.str(), M_WARNING, false);
             sample_to_tlens[sample].push_back(abs(alignment.TemplateLength()));
+            if (sample_to_tlens[sample].size() < min_tlens_collection_size) {
+                min_tlens_collection_size = sample_to_tlens[sample].size();
+            }
         }
         num_regions_so_far++;
     }
