@@ -27,10 +27,15 @@ along with GangSTR.  If not, see <http://www.gnu.org/licenses/>.
 #include "src/stringops.h"
 
 #include <iostream>
+#include <sstream>
+
 using namespace std;
 
 RegionReader::RegionReader(const std::string& filename) {
   freader = new std::ifstream(filename.c_str());
+  std::stringstream ss;
+  ss << "Regions file name " << filename;
+  PrintMessageDieOnError(ss.str(), M_WARNING, false);
   if (!freader->is_open()) {
     PrintMessageDieOnError("Could not open regions file", M_ERROR, false);
   }
